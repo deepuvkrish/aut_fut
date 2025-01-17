@@ -1,5 +1,7 @@
 import { db } from "@/lib/dbConfig";
 import { NextResponse } from "next/server";
+import { hash } from "bcrypt";
+
 
 export async function POST(req:Request){
     try{
@@ -23,7 +25,17 @@ export async function POST(req:Request){
             return NextResponse.json({user:null, message:"Username not available!"},{status:409})   
         }
 
-        return NextResponse.json(body)
+
+        const hashedPassWord = await hash(password, 10)
+        const newUser = await db.user.create({
+            data:{
+                username,
+                email,
+                password:hashedPassWord
+            }
+        })
+
+        return NextResponse.json({ user: newUser, message:"User Created sucessfully.!"}, {status:201});
     }catch(error){
 
     }
