@@ -15,6 +15,14 @@ export async function POST(req:Request){
             return NextResponse.json({user:null, message:"User email already exists!"},{status:409})
         }
 
+        //Check Existing Users by Username:-
+        const existingUserByUsername = await db.user.findUnique({
+            where:{username:username}
+        });
+        if(existingUserByUsername){
+            return NextResponse.json({user:null, message:"Username not available!"},{status:409})   
+        }
+
         return NextResponse.json(body)
     }catch(error){
 
